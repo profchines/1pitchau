@@ -11,6 +11,7 @@ import {
   OpenLinksButton,
   RightContainer
 } from "./styles";
+import axios, { AxiosError } from "axios";
 
 interface IDataMenu {
   id: number;
@@ -19,20 +20,19 @@ interface IDataMenu {
 
 export const Menu = () => {
 
-  const [extendNavbar, setExtendNavbar] = useState(false);
+  const [extendNavbar, setExtendNavbar] = useState<boolean>(false);
   const [dataMenu, setDataMenu] = useState<Array<IDataMenu>>([])
 
   useEffect(() => {
-    setDataMenu([
-      {
-        id: 1,
-        categoria: 'Eletronicos'
-      },
-      {
-        id: 2,
-        categoria: 'Moveis'
-      },
-    ])
+
+    axios.get('http://localhost:3000/categorias')
+      .then((res) => {
+        setDataMenu(res.data)
+      })
+      .catch((err: AxiosError) => {
+        console.log(err)
+      })
+
   }, [])
 
   return (
@@ -92,6 +92,18 @@ export const Menu = () => {
               <NavbarLinkExtended to={'/'}>
                 Home
               </NavbarLinkExtended>
+              {
+                dataMenu.map((menu) => {
+                  return (
+                    <NavbarLinkExtended
+                      key={menu.id}
+                      to={'/categoria/' + menu.id}
+                    >
+                      {menu.categoria}
+                    </NavbarLinkExtended>
+                  )
+                })
+              }
             </NavbarExtendedContainer>
           )
         }
