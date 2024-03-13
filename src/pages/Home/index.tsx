@@ -1,7 +1,34 @@
+import { useEffect, useState } from "react"
+import axios, { AxiosError } from "axios"
+import { Card } from "../../components/Card"
 import { Menu } from "../../components/Menu"
-import { Button, CardBody, TextButton, TextPromo, Title, TitlePreco } from "./styles"
+
+interface IReqProduto {
+  "id": number,
+  "nome": string,
+  "valor": string,
+  "promo": string,
+  "id_categoria": number,
+  "promoNumber": string,
+  "imagemg": string,
+  "imagemp": string
+}
 
 export const Home = () => {
+
+  const [dataProduto, setDataProduto] = useState<Array<IReqProduto>>([])
+
+  useEffect(() => {
+
+    axios.get('http://localhost:3000/produtos')
+      .then((res) => {
+        setDataProduto(res.data)
+      })
+      .catch((err: AxiosError) => {
+        console.log(err)
+      })
+
+  }, [])
 
   return (
     <>
@@ -16,19 +43,30 @@ export const Home = () => {
         <div
           style={{
             display: 'flex',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            flexWrap: 'wrap'
           }}
         >
-          <CardBody>
-            <img src="https://m.media-amazon.com/images/I/81JJHlQjIiL.jpg" />
-            <Title>PenDrive Sansung</Title>
-            <TitlePreco>80,00</TitlePreco>
-            <TextPromo>10,99</TextPromo>
-            <Button>
-              <TextButton>Detalhes</TextButton>
-            </Button>
+          {/* Card era aqui */}
+          {
+            dataProduto.map((produto) => {
+              return (
+                <Card
+                  key={produto.id}
+                  id={produto.id}
+                  titulo={produto.nome}
+                  preco={produto.valor}
+                  promocao={produto.promo}
+                  img={
+                    'https://raw.githubusercontent.com/profchines/imagens1Pitchau/main/Imagens1Pitchau/'
+                    +
+                    produto.imagemp
+                  }
+                />
+              )
+            })
+          }
 
-          </CardBody>
         </div>
       </div>
     </>
