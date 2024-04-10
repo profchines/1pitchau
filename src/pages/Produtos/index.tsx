@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Menu } from "../../components/Menu"
 import { Button, Col4, Col6, Input, Row, TextButton } from "./styles"
-import { useEffect, useState } from "react"
+import { SyntheticEvent, useCallback, useEffect, useState } from "react"
 import axios from "axios"
+import { ICarrinho } from "../../@types/interfaces"
 
 interface IProduto {
   "id": number,
@@ -18,6 +19,7 @@ interface IProduto {
 export const Produtos = () => {
 
   const { id } = useParams()
+  const navigate = useNavigate()
 
   const [produto, setProduto] = useState<IProduto>()
 
@@ -30,6 +32,57 @@ export const Produtos = () => {
         console.log(err)
       })
   }, [id])
+
+  const onSubmit = useCallback((e: SyntheticEvent) => {
+    e.preventDefault();
+
+    const target = e.target as typeof e.target & {
+      quantidade: { value: number }
+    }
+
+    if (produto) {
+      let qtd = target.quantidade.value
+
+      if (qtd > 0) {
+        let objProduto = {
+          ...produto,
+          quantidade: qtd,
+          total: Number(produto.promo) * qtd
+        }
+
+        // localStorage
+        let lsCarrinho =
+          localStorage.getItem('@1pitchau:carrinho')
+
+        let carrinho: Array<ICarrinho> = []
+
+        if (typeof lsCarrinho === 'string') {
+          carrinho = JSON.parse(lsCarrinho)
+        }
+
+        if (carrinho.length > 0) {
+
+          carrinho.push(objProduto)
+
+          localStorage.setItem(
+            '@1pitchau:carrinho',
+            JSON.stringify(carrinho)
+          )
+
+        } else {
+          localStorage.setItem(
+            '@1pitchau:carrinho',
+            JSON.stringify([objProduto])
+          )
+        }
+
+
+        navigate('/carrinho')
+
+      }
+    }
+
+  }, [produto])
 
   return (
     <>
@@ -73,7 +126,9 @@ export const Produtos = () => {
                     }}
                   >R$ {produto.promo}</p>
 
-                  <form>
+                  <form
+                    onSubmit={onSubmit}
+                  >
                     <Input
                       type="number"
                       name="quantidade"
@@ -82,7 +137,9 @@ export const Produtos = () => {
                       required
                     />
 
-                    <Button>
+                    <Button
+                      type="submit"
+                    >
                       <TextButton>
                         Adicionar ao Carrinho
                       </TextButton>
