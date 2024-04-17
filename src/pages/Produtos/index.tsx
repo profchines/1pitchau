@@ -62,7 +62,22 @@ export const Produtos = () => {
 
         if (carrinho.length > 0) {
 
-          carrinho.push(objProduto)
+          let igual = false
+
+          carrinho.forEach((produto) => {
+            if (produto.id == objProduto.id) {
+              igual = true
+
+              let qtd = Number(produto.quantidade) + Number(objProduto.quantidade)
+              produto.quantidade = qtd
+
+              produto.total = Number(produto.promo) * qtd
+            }
+          })
+
+          if (!igual) {
+            carrinho.push(objProduto)
+          }
 
           localStorage.setItem(
             '@1pitchau:carrinho',

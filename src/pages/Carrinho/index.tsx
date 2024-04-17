@@ -43,6 +43,20 @@ export const Carrinho = () => {
 
   }, [])
 
+  const removeProdutoCarrinho = useCallback((id: number) => {
+    let carrinho = dataCarrinho.filter((produto) => {
+      return produto.id != id
+    })
+
+    localStorage.setItem(
+      '@1pitchau:carrinho',
+      JSON.stringify(carrinho)
+    )
+
+    setDataCarrinho(carrinho)
+    atualizaValorTotal(carrinho)
+  }, [dataCarrinho])
+
   return (
     <>
       <Menu />
@@ -83,6 +97,7 @@ export const Carrinho = () => {
                     <Td>
                       <Button
                         type="button"
+                        onClick={() => { removeProdutoCarrinho(produto.id) }}
                       >
                         <TextButton>
                           <FaTrash />
