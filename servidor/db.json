@@ -130,5 +130,21 @@
       "imagemg": "pendrives/pendrive3g.jpg",
       "imagemp": "pendrives/pendrive3p.jpg"
     }
+  ],
+  "usuarios": [
+    {
+      "id": 1,
+      "nome": "Admin",
+      "email": "admin@gmail.com",
+      "senha": "123",
+      "permissoes": "admin"
+    },
+    {
+      "id": 2,
+      "nome": "Colaborador",
+      "email": "colaborador@gmail.com",
+      "senha": "123",
+      "permissoes": "colaborador"
+    }
   ]
 }
